@@ -69,7 +69,7 @@ const Wallet = ({ walletIndex }) => {
     return (<View style={styles.container}>
         <DropDownPicker open={dropdownOpen} setOpen={setDropdownOpen} value={currency} setValue={onSelectCurrency}
             items={availableCurrencies.map(c => ({ label: c, value: c }))} style={styles.currency} />
-        <Text style={styles.text}>Balance: {wallet.display}{wallet.balance}</Text>
+        <Text style={styles.text}>Balance: {wallet.display}{wallet.balance.toFixed(4)}</Text>
         <View style={{ flexDirection: 'row' }}>
             <NumbericInputForm value={exchanges[0]} label='IN' style={{ marginRight: 5 }} onChange={t => onChangeExchanges(0, t)} />
             <NumbericInputForm value={exchanges[1]} label='OUT' style={{ marginLeft: 5 }} onChange={t => onChangeExchanges(1, t)} />

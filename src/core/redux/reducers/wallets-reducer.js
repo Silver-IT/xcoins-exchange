@@ -10,18 +10,23 @@ const initRates = {
 }; // Based on 'EUR'
 const initVisibleCurrencies = ['USD', 'EUR'];
 
+const initWallets = [
+    { currency: 'USD', balance: 200, display: '$' },
+    { currency: 'EUR', balance: 150, display: '€' },
+    { currency: 'GBP', balance: 50, display: '£' }
+];
+
+const initExchanges = [['', ''], ['', '']];
+
 const initWalletReducer = {
-    wallets: [
-        { currency: 'USD', balance: 200, display: '$' },
-        { currency: 'EUR', balance: 150, display: '€' },
-        { currency: 'GBP', balance: 50, display: '£' }
-    ],
+    wallets: initWallets,
     visibleCurrencies: initVisibleCurrencies,
-    focusWalletIndex: 0,
+    focusWalletIndex: initWallets.findIndex(w => w.currency === initVisibleCurrencies[0]),
+    targetWalletIndex: initWallets.findIndex(w => w.currency === initVisibleCurrencies[1]),
     error: '',
     rates: initRates,
     rate: initRates[initVisibleCurrencies[0]] / initRates[initVisibleCurrencies[1]],
-    exchanges: [['', ''], ['', '']],
+    exchanges: initExchanges
 };
 
 const walletsReducer = (state = initWalletReducer, action) => {
@@ -30,20 +35,24 @@ const walletsReducer = (state = initWalletReducer, action) => {
             const newCurrencies = state.visibleCurrencies.map((c, i) =>
                 i === action.payload.walletIndex ? action.payload.currency : c);
             return {
-                ...state, visibleCurrencies: newCurrencies, rate: getRateByCurrency(state.rates, newCurrencies[0], newCurrencies[1])
+                ...state,
+                visibleCurrencies: newCurrencies,
+                rate: getRateByCurrency(state.rates, newCurrencies[0], newCurrencies[1]),
+                exchanges: initExchanges
             };
         case UPDATE_EXCHANGES:
             let error = '';
             const selectedWallets = state.wallets.filter(w => state.visibleCurrencies.includes(w.currency));
             const mainWallet = selectedWallets.find(w=>w.currency === state.visibleCurrencies[action.payload.walletIndex]);
-            const subWallet = selectedWallets.find(w=>w.currency !== state.visibleCurrencies[action.payload.walletIndex]);
+            const subWallet = selectedWallets.find(w=>w.currency !== state.visibleCurrencies[action.payload.walletIndex]) || mainWallet;
             if (action.payload.exchanges[1] > mainWallet.balance ||
                 action.payload.exchanges[0] * state.rate > subWallet.balance) {
                 error = 'Exceeds balance';
             }
             return {
                 ...state, error,
-                focusWalletIndex: action.payload.walletIndex,
+                focusWalletIndex: state.wallets.findIndex(w => w.currency === mainWallet.currency),
+                targetWalletIndex: state.wallets.findIndex(w => w.currency === subWallet.currency),
                 exchanges: state.exchanges.map((e, i) =>
                     i === action.payload.walletIndex ?
                         action.payload.exchanges :
@@ -52,7 +61,21 @@ const walletsReducer = (state = initWalletReducer, action) => {
         case UPDATE_RATES:
             return { ...state, rates: action.payload.rates };
         case EXCHANGE:
-            break;
+            const wallets = Object.assign([], state.wallets);
+            const focusWallet = Object.assign({}, wallets[state.focusWalletIndex]);
+            const targetWallet = Object.assign({}, wallets[state.targetWalletIndex]);
+            const focusExchangeIndex = state.visibleCurrencies.findIndex(c => c === focusWallet.currency);
+            const targetExchangeIndex = state.visibleCurrencies.findIndex(c => c === targetWallet.currency);
+            const rate = getRateByCurrency(state.rates, state.visibleCurrencies[targetExchangeIndex], state.visibleCurrencies[focusExchangeIndex]);
+            focusWallet.balance = focusWallet.balance +
+                parseFloat(state.exchanges[focusExchangeIndex][0] || 0) -
+                parseFloat(state.exchanges[focusExchangeIndex][1] || 0);
+            wallets.splice(state.focusWalletIndex, 1, focusWallet);
+            targetWallet.balance = targetWallet.balance -
+                parseFloat(state.exchanges[focusExchangeIndex][0] * rate || 0) +
+                parseFloat(state.exchanges[focusExchangeIndex][1] * rate || 0);
+            wallets.splice(state.targetWalletIndex, 1, targetWallet);
+            return { ...state, wallets, exchanges: initExchanges };
         default:
             return state;
     }
