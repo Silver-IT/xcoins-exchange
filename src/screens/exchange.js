@@ -37,7 +37,9 @@ const styles = StyleSheet.create({
     },
     exchangeButtonWrapper: {
         paddingHorizontal: 24,
-        paddingVertical: 16
+        paddingVertical: 16,
+        borderColor: '#D1D1D1',
+        borderTopWidth: 1
     }
 });
 
