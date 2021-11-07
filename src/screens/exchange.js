@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -10,7 +10,8 @@ import Toast from 'react-native-toast-message';
 import { useDispatch, useSelector } from 'react-redux';
 import Wallet from '../components/wallet';
 
-import { EXCHANGE } from '../core/redux/actions-types';
+import ExchangeAPI from '../core/services/exchange';
+import { EXCHANGE, UPDATE_RATES } from '../core/redux/actions-types';
 
 const styles = StyleSheet.create({
     container: {
@@ -65,6 +66,17 @@ const ExchangeScreen = () => {
         });
         dispath({ type: EXCHANGE });
     };
+
+    useEffect(() => {
+        let updateRatesInterval = setInterval(() => {
+            ExchangeAPI.getLatestRates().then(rates => {
+                dispath({ type: UPDATE_RATES, payload: { rates } });
+            }, err => console.log(err));
+        }, 1000 * 5);
+        return () => {
+            clearInterval(updateRatesInterval);
+        };
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
