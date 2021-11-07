@@ -27,15 +27,14 @@ const styles = StyleSheet.create({
     rateText: {
         paddingHorizontal: 15,
         paddingVertical: 5,
-        marginBottom: 10,
         borderWidth: 1,
         borderRadius: 20,
         borderColor: '#15c39a',
         color: '#111111'
     },
     errorMsg: {
-        marginTop: 10,
-        color: 'red'
+        marginBottom: 20,
+        color: 'red',
     }
 });
 
@@ -85,10 +84,15 @@ const ExchangeScreen = () => {
                 <View style={styles.textWrapper}>
                     <Text style={styles.rateText}>1{mainWallet.display} = {rate === 1 ? 1 : rate.toFixed(4)}{subWallet.display}</Text>
                 </View>
-                <Button disabled={!!errorMessage} title='Exchange' onPress={onExchangeRequested} />
-                {!!errorMessage ? <Text style={styles.errorMsg}>{errorMessage}</Text> : null}
+
             </View>
             <Wallet walletIndex={1} />
+            <View style={styles.container}>
+                {!!errorMessage ? <View style={styles.textWrapper}>
+                    <Text style={styles.errorMsg}>{errorMessage}</Text>
+                </View> : null}
+                <Button disabled={!!errorMessage} title='Exchange' onPress={onExchangeRequested} />
+            </View>
             <Toast />
         </SafeAreaView>
     );

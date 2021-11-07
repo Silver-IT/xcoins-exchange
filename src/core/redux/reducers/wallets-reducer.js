@@ -1,3 +1,4 @@
+import Toast from 'react-native-toast-message';
 import {
     SELECT_CURRENCY, UPDATE_RATES, EXCHANGE, UPDATE_EXCHANGES
 } from '../actions-types';
@@ -40,7 +41,8 @@ const walletsReducer = (state = initWalletReducer, action) => {
                 rate: getRateByCurrency(state.rates, newCurrencies[0], newCurrencies[1]),
                 exchanges: initExchanges,
                 focusWalletIndex: state.wallets.findIndex(w => w.currency === newCurrencies[0]),
-                targetWalletIndex: state.wallets.findIndex(w => w.currency === newCurrencies[1])
+                targetWalletIndex: state.wallets.findIndex(w => w.currency === newCurrencies[1]),
+                error: ''
             };
         case UPDATE_EXCHANGES:
             let error = '';
@@ -61,9 +63,6 @@ const walletsReducer = (state = initWalletReducer, action) => {
                         action.payload.exchanges.map(e => !e ? '' : `${(parseFloat(e) * state.rate).toFixed(4)}`).reverse())
             };
         case UPDATE_RATES:
-            console.log(action.payload.rates,
-                state.wallets[state.focusWalletIndex].currency,
-                state.wallets[state.targetWalletIndex].currency);
             return {
                 ...state,
                 rates: action.payload.rates,
@@ -88,6 +87,12 @@ const walletsReducer = (state = initWalletReducer, action) => {
                 parseFloat(state.exchanges[focusExchangeIndex][0] * rate || 0) +
                 parseFloat(state.exchanges[focusExchangeIndex][1] * rate || 0);
             wallets.splice(state.targetWalletIndex, 1, targetWallet);
+            Toast.show({
+                type: 'success',
+                position: 'bottom',
+                text1: 'Success',
+                text2: 'Exchanged successfully.👍'
+            });
             return { ...state, wallets, exchanges: initExchanges };
         default:
             return state;
