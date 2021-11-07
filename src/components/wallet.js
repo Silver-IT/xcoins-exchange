@@ -13,6 +13,11 @@ const styles = StyleSheet.create({
     container: {
         padding: 24
     },
+    title: {
+        fontSize: 18,
+        marginBottom: 12,
+        color: 'green',
+    },
     text: {
         marginTop: 8,
         fontSize: 18,
@@ -67,6 +72,7 @@ const Wallet = ({ walletIndex }) => {
     };
 
     return (<View style={styles.container}>
+        <Text style={styles.title}>Wallet {walletIndex + 1}</Text>
         <DropDownPicker open={dropdownOpen} setOpen={setDropdownOpen} value={currency} setValue={onSelectCurrency}
             items={availableCurrencies.map(c => ({ label: c, value: c }))} style={styles.currency} />
         <Text style={styles.text}>Balance: {wallet.display}{wallet.balance.toFixed(4)}</Text>
