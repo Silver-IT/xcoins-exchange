@@ -11,7 +11,8 @@ import { SELECT_CURRENCY, UPDATE_EXCHANGES } from '../core/redux/actions-types';
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24
+        padding: 24,
+        backgroundColor: '#F1F1F1'
     },
     title: {
         fontSize: 18,

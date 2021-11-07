@@ -16,7 +16,6 @@ import { EXCHANGE, UPDATE_RATES } from '../core/redux/actions-types';
 const styles = StyleSheet.create({
     container: {
         padding: 24,
-        backgroundColor: 'white',
         borderColor: '#D1D1D1',
         borderBottomWidth: 1,
         borderTopWidth: 1
@@ -33,8 +32,12 @@ const styles = StyleSheet.create({
         color: '#111111'
     },
     errorMsg: {
-        marginBottom: 20,
+        marginBottom: 10,
         color: 'red',
+    },
+    exchangeButtonWrapper: {
+        paddingHorizontal: 24,
+        paddingVertical: 16
     }
 });
 
@@ -78,7 +81,7 @@ const ExchangeScreen = () => {
     }, []);
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <Wallet walletIndex={0} />
             <View style={styles.container}>
                 <View style={styles.textWrapper}>
@@ -87,7 +90,7 @@ const ExchangeScreen = () => {
 
             </View>
             <Wallet walletIndex={1} />
-            <View style={styles.container}>
+            <View style={styles.exchangeButtonWrapper}>
                 {!!errorMessage ? <View style={styles.textWrapper}>
                     <Text style={styles.errorMsg}>{errorMessage}</Text>
                 </View> : null}
