@@ -15,21 +15,35 @@ import { EXCHANGE, UPDATE_RATES } from '../core/redux/actions-types';
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24,
+        position: 'relative',
         borderColor: '#D1D1D1',
-        borderBottomWidth: 1,
-        borderTopWidth: 1
+        borderTopWidth: 1,
+        zIndex: 1
     },
     textWrapper: {
         alignItems: 'center',
     },
+    rateTextWrapper: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: -15,
+        bottom: -15,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     rateText: {
+        backgroundColor: 'white',
         paddingHorizontal: 15,
         paddingVertical: 5,
         borderWidth: 1,
         borderRadius: 20,
         borderColor: '#15c39a',
-        color: '#111111'
+        color: '#111111',
+        zIndex: 1000,
+        width: '40%',
+        textAlign: 'center'
     },
     errorMsg: {
         marginBottom: 10,
@@ -40,7 +54,7 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderColor: '#D1D1D1',
         borderTopWidth: 1
-    }
+    },
 });
 
 const ExchangeScreen = () => {
@@ -74,7 +88,9 @@ const ExchangeScreen = () => {
     useEffect(() => {
         let updateRatesInterval = setInterval(() => {
             ExchangeAPI.getLatestRates().then(rates => {
-                dispath({ type: UPDATE_RATES, payload: { rates } });
+                if (rates) {
+                    dispath({ type: UPDATE_RATES, payload: { rates } });
+                }
             }, err => console.log(err));
         }, 1000 * 5);
         return () => {
@@ -86,10 +102,9 @@ const ExchangeScreen = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <Wallet walletIndex={0} />
             <View style={styles.container}>
-                <View style={styles.textWrapper}>
+                <View style={styles.rateTextWrapper}>
                     <Text style={styles.rateText}>1{mainWallet.display} = {rate === 1 ? 1 : rate.toFixed(4)}{subWallet.display}</Text>
                 </View>
-
             </View>
             <Wallet walletIndex={1} />
             <View style={styles.exchangeButtonWrapper}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -11,7 +11,9 @@ import { SELECT_CURRENCY, UPDATE_EXCHANGES } from '../core/redux/actions-types';
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24,
+        paddingHorizontal: 24,
+        paddingTop: 24,
+        paddingBottom: 36,
         backgroundColor: '#F1F1F1'
     },
     title: {
@@ -22,6 +24,10 @@ const styles = StyleSheet.create({
     text: {
         marginTop: 8,
         fontSize: 18,
+    },
+    textExpectation: {
+        marginTop: 12,
+        fontSize: 14
     },
     currency: {
         padding: 10,
@@ -54,7 +60,8 @@ const Wallet = ({ walletIndex }) => {
     const currency = visibleCurrencies[walletIndex];
     const wallet = useSelector(state => state.walletsReducer.wallets.find(w => w.currency === currency));
     const exchanges = useSelector(state => state.walletsReducer.exchanges[walletIndex]);
-    
+
+    const exchange = parseFloat(exchanges[0]) || 0 - parseFloat(exchanges[1]) || 0;
 
     const dispatch = useDispatch();
 
@@ -76,7 +83,10 @@ const Wallet = ({ walletIndex }) => {
         <Text style={styles.title}>Wallet {walletIndex + 1}</Text>
         <DropDownPicker open={dropdownOpen} setOpen={setDropdownOpen} value={currency} setValue={onSelectCurrency}
             items={availableCurrencies.map(c => ({ label: c, value: c }))} style={styles.currency} />
-        <Text style={styles.text}>Balance: {wallet.display}{wallet.balance.toFixed(4)}</Text>
+        <View style={{flexDirection: 'row'}}>
+            <Text style={styles.text}>Balance: {wallet.display}{wallet.balance.toFixed(2)}</Text>
+            {!!exchange ? <Text style={styles.textExpectation}> ( {exchange > 0 ? '+ ' : ''}{exchange} = {(wallet.balance + exchange).toFixed(2)} )</Text> : null }
+        </View>
         <View style={{ flexDirection: 'row' }}>
             <NumbericInputForm value={exchanges[0]} label='IN' style={{ marginRight: 5 }} onChange={t => onChangeExchanges(0, t)} />
             <NumbericInputForm value={exchanges[1]} label='OUT' style={{ marginLeft: 5 }} onChange={t => onChangeExchanges(1, t)} />
