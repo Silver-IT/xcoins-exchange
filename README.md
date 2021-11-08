@@ -57,3 +57,6 @@ $ yarn ios
 ```bash
 $ yarn test
 ```
+
+## Production
+* Install [APK file](https://github.com/Silver-IT/xcoins-exchange/blob/main/android/app/release/app-release.apk) for Android version
