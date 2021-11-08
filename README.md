@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/src/assets/logo_main.png" width="400" alt="XCoins Logo" />
+  <img src="/src/assets/logo-main.png" width="400" alt="XCoins Logo" />
 </p>
    
 
